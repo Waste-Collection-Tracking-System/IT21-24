@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Waste Collection Notification System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: #f4f8f4;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2e7d32;
+      color: white;
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 1rem;
+      margin: 0.5rem 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #2e7d32;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #256428;
+    }
+
+    .schedule-box {
+      background: #e8f5e9;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      border-radius: 8px;
+      border-left: 6px solid #2e7d32;
+    }
+
+    .notification {
+      background: #d9ffd9;
+      color: #2e7d32;
+      border: 2px solid #2e7d32;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Waste Collection Tracker</h1>
+    <p>Get Notified When the Garbage Truck Arrives</p>
+  </header>
+
+  <main>
+    <label for="barangaySelect">Select Barangay:</label>
+    <select id="barangaySelect">
+      <option value="">-- Choose a Barangay --</option>
+      <option value="Tankulan">Tankulan</option>
+      <option value="Kalugmanan">Kalugmanan</option>
+      <option value="Sinangguyan">Sinangguyan</option>
+      <option value="Managok">Managok</option>
+    </select>
+
+    <button id="viewScheduleBtn">View Schedule</button>
+    <div id="scheduleResult"></div>
+
+    <div class="notification" id="notificationBox"></div>
+  </main>
+
+  <script>
+
+    const schedules = [
+      { barangay: "Tankulan", date: "November 14, 2025", time: "10:00 AM" },
+      { barangay: "Kalugmanan", date: "November 14, 2025", time: "11:30 AM" },
+      { barangay: "Sinangguyan", date: "November 14, 2025", time: "1:00 PM" },
+      { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" },
+    ];
+
+    const viewBtn = document.getElementById("viewScheduleBtn");
+    const scheduleDiv = document.getElementById("scheduleResult");
+    const notifBox = document.getElementById("notificationBox");
+
+    viewBtn.addEventListener("click", () => {
+      const barangay = document.getElementById("barangaySelect").value;
+      scheduleDiv.innerHTML = "";
+      notifBox.style.display = "none";
+
+      if (!barangay) {
+        scheduleDiv.innerHTML = "<p>Please select a barangay.</p>";
+        return;
+      }
+
+      const found = schedules.find(s => s.barangay === barangay);
+
+      if (found) {
+        scheduleDiv.innerHTML = `
+          <div class="schedule-box">
+            <h3>${found.barangay}</h3>
+            <p><strong>Collection Date:</strong> ${found.date}</p>
+            <p><strong>Arrival Time:</strong> ${found.time}</p>
+            <button id="notifyBtn">Notify Me</button>
+          </div>
+        `;
+
+        // Handle "Notify Me" button
+        document.getElementById("notifyBtn").addEventListener("click", () => {
+          // Simulate a notification (in real case, this could be SMS/email)
+          notifBox.innerHTML = `📢 You will be notified when the garbage truck arrives in <b>${found.barangay}</b> at <b>${found.time}</b>.`;
+          notifBox.style.display = "block";
+
+          // Simulate truck arrival after 5 seconds (for demo)
+          setTimeout(() => {
+            alert(`🚛 Garbage truck is arriving now in ${found.barangay}!`);
+          }, 5000); // 5-second simulation
+        });
+      } else {
+        scheduleDiv.innerHTML = `<p>No schedule found for ${barangay}.</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
