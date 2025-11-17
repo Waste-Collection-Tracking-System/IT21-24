@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        #map { height: 700px; }
+        .popup-image {
+            max-width: 200px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Garbage Truck Map</h1>
+<div id="map"></div>
+
+<script>
+
+function initMap(jsonUrl){
+    const urlParams = new URLSearchParams(window.location.search);
+    const place = urlParams.get("place");  // example: Tankulan
+
+    var map = L.map('map').setView([8.360053, 124.868341], 16);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    fetch(jsonUrl)
+    .then(r => r.json())
+    .then(data => {
+        data.forEach(pin => {
+            if(pin.name === place){
+                const marker = L.marker([pin.lat, pin.lng]).addTo(map);
+                const img = `<img src='${pin.img}' class="popup-image">`;
+                marker.bindPopup(`${img}<br><b>${pin.title}</b><br>${pin.description}`).openPopup();
+                
+                map.setView([pin.lat, pin.lng], 18);
+            }
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initMap('maps.json');
+});
+</script>
+
+</body>
+</html>
