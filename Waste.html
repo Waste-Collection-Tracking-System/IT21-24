@@ -1,46 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Waste Collection Notification System</title>
-  <style>
-    * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
-    body { background: #f4f8f4; margin: 0; padding: 0; }
-    header { background-color: #2e7d32; color: white; text-align: center; padding: 1rem 0; position: relative; }
-    main { max-width: 700px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    select, button { padding: 10px; font-size: 1rem; margin: 0.5rem 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
-    button { background-color: #2e7d32; color: white; cursor: pointer; }
-    button:hover { background-color: #256428; }
-    .schedule-box { background: #e8f5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; border-left: 6px solid #2e7d32; }
-    .notification { background: #d9ffd9; color: #2e7d32; border: 2px solid #2e7d32; padding: 1rem; border-radius: 8px; margin-top: 1rem; display: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waste Collection Notification System</title>
+<style>
+* { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+body { background: #f4f8f4; margin: 0; padding: 0; }
+
+header { background-color: #2e7d32; color: white; text-align: center; padding: 1rem 0; }
+main { max-width: 700px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+select, button { padding: 10px; font-size: 1rem; margin: 0.5rem 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
+button { background-color: #2e7d32; color: white; cursor: pointer; }
+button:hover { background-color: #256428; }
+.schedule-box { background: #e8f5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; border-left: 6px solid #2e7d32; }
+
+/* Toast Notification */
+#toast {
+  position: fixed;
+  top: -100px; /* hidden initially */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e0e0e0;
+  color: #333;
+  border-left: 6px solid #2e7d32;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 1000;
+  max-width: 90%;
+  text-align: center;
+  transition: top 0.5s ease;
+}
+</style>
 </head>
 <body>
 
 <header>
-  <h1>Waste Collection Tracker</h1>
-  <p>Get Notified When the Garbage Truck Arrives</p>
+<h1>Waste Collection Tracker</h1>
+<p>Get Notified When the Garbage Truck Arrives</p>
 </header>
 
 <main>
-  <label for="barangaySelect">Select Barangay:</label>
-  <select id="barangaySelect">
-    <option value="">-- Choose a Barangay --</option>
-    <option value="Tankulan">Tankulan</option>
-    <option value="Kalugmanan">Kalugmanan</option>
-    <option value="Sinangguyan">Sinangguyan</option>
-    <option value="Managok">Managok</option>
-  </select>
+<label for="barangaySelect">Select Barangay:</label>
+<select id="barangaySelect">
+  <option value="">-- Choose a Barangay --</option>
+  <option value="Tankulan">Tankulan</option>
+  <option value="Kalugmanan">Kalugmanan</option>
+  <option value="Sinangguyan">Sinangguyan</option>
+  <option value="Managok">Managok</option>
+</select>
 
-  <button id="viewScheduleBtn">View Schedule</button>
+<button id="viewScheduleBtn">View Schedule</button>
 
-  <div id="scheduleResult"></div>
-  <div class="notification" id="notificationBox"></div>
+<div id="scheduleResult"></div>
 </main>
 
+<!-- Top notification -->
+<div id="toast"></div>
+
 <script>
-// Schedule Data
 const schedules = [
   { barangay: "Tankulan", date: "November 14, 2025", time: "10:00 AM" },
   { barangay: "Kalugmanan", date: "November 14, 2025", time: "11:30 AM" },
@@ -48,24 +68,37 @@ const schedules = [
   { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" },
 ];
 
-// OpenWeather API
 const apiKey = "ca45e594f941130c5672f6041a604ba0";
+const toast = document.getElementById("toast");
+
 async function getWeatherReason() {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=Manolo Fortich&appid=${apiKey}&units=metric`;
   const response = await fetch(url);
   if (!response.ok) return "Unable to fetch weather.";
   const data = await response.json();
-  return `${data.weather[0].description} | Temp: ${data.main.temp}°C | Humidity: ${data.main.humidity}% | Wind: ${data.wind.speed} m/s`;
+  return `<h2>${data.name}, ${data.sys.country}</h2>
+          <p>Temperature: ${data.main.temp} °C</p>
+          <p>Weather: ${data.weather[0].description}</p>
+          <p>Humidity: ${data.main.humidity}%</p>
+          <p>Wind Speed: ${data.wind.speed} m/s</p>`;
+}
+
+// Show toast notification
+function showToast(message) {
+  toast.innerHTML = message;
+  toast.style.top = "20px"; // slide down
+  toast.style.display = "block";
+  setTimeout(() => {
+    toast.style.top = "-100px"; // hide after 5 sec
+  }, 5000);
 }
 
 const viewBtn = document.getElementById("viewScheduleBtn");
 const scheduleDiv = document.getElementById("scheduleResult");
-const notifBox = document.getElementById("notificationBox");
 
 viewBtn.addEventListener("click", () => {
   const barangay = document.getElementById("barangaySelect").value;
   scheduleDiv.innerHTML = "";
-  notifBox.style.display = "none";
 
   if (!barangay) {
     scheduleDiv.innerHTML = "<p>Please select a barangay.</p>";
@@ -81,24 +114,23 @@ viewBtn.addEventListener("click", () => {
         <p><strong>Collection Date:</strong> ${found.date}</p>
         <p><strong>Arrival Time:</strong> ${found.time}</p>
 
-        <button onclick="location.href='maps.html?place=${found.barangay}'">
-          View Truck Location (Map)
-        </button>
-
         <button id="onWayBtn">Truck On The Way</button>
         <button id="cancelBtn">Cancelled Due to Weather</button>
+        <button id="viewMapBtn">View Truck Location (Map)</button>
       </div>
     `;
 
     document.getElementById("onWayBtn").onclick = () => {
-      notifBox.innerHTML = `🚛 Truck is now heading to <b>${found.barangay}</b> at ${found.time}.`;
-      notifBox.style.display = "block";
+      showToast(`🚛 Truck is now heading to <b>${found.barangay}</b> at <b>${found.time}</b>.`);
     };
 
     document.getElementById("cancelBtn").onclick = async () => {
       const reason = await getWeatherReason();
-      notifBox.innerHTML = `❌ <b>Collection Cancelled</b><br>Reason: <b>${reason}</b>`;
-      notifBox.style.display = "block";
+      showToast(`❌ <b>Collection Cancelled</b> due to weather:<br>${reason}`);
+    };
+
+    document.getElementById("viewMapBtn").onclick = () => {
+      window.location.href = `maps.html?place=${found.barangay}`;
     };
 
   } else {
@@ -106,6 +138,5 @@ viewBtn.addEventListener("click", () => {
   }
 });
 </script>
-
 </body>
 </html>

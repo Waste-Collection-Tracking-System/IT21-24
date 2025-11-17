@@ -1,8 +1,6 @@
-// Get query parameter
 const urlParams = new URLSearchParams(window.location.search);
 const place = urlParams.get('place') || 'Tankulan';
 
-// Initialize Map
 function initMap() {
   const map = L.map('map').setView([8.360053, 124.868342], 17);
 
@@ -15,7 +13,7 @@ function initMap() {
     .then(res => res.json())
     .then(data => {
       data.forEach(pin => {
-        if(pin.barangay === place){ // Show only selected barangay
+        if(pin.barangay === place){
           const marker = L.marker([pin.lat, pin.lng]).addTo(map);
           marker.bindPopup(`<b>${pin.title}</b><br>${pin.description}`);
         }

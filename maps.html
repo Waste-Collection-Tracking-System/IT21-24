@@ -11,87 +11,16 @@ body { font-family: "Poppins", sans-serif; background: #f4f8f4; margin:0; paddin
 #map { height: 300px; width: 90%; margin: 10px auto; border-radius: 10px; }
 button { margin:10px; padding:10px 15px; border:none; border-radius:8px; cursor:pointer; background:#2e7d32; color:white; }
 button:hover { background:#256428; }
-
-.notification {
-  background: #d9ffd9; 
-  color: #2e7d32; 
-  border: 2px solid #2e7d32; 
-  padding: 10px 15px; 
-  border-radius: 8px; 
-  width: 90%; 
-  margin: 10px auto;
-  display: none;
-  text-align: center;
-}
 </style>
 </head>
 <body>
 
 <h1 style="text-align:center;">Truck Location</h1>
-
-<div class="notification" id="notifBox"></div>
-
 <div id="map"></div>
-
 <div style="text-align:center;">
   <button onclick="history.back()">← Back to Home</button>
 </div>
 
 <script src="maps.js"></script>
-<script>
-/* --- NOTIFICATION HANDLER --- */
-// Read URL parameters
-const urlParams = new URLSearchParams(window.location.search);
-const place = urlParams.get('place') || 'Tankulan';
-const status = urlParams.get('status'); // optional: "onway" or "cancel"
-
-// Show notification at top if status is set
-const notifBox = document.getElementById("notifBox");
-
-if(status === "onway") {
-  notifBox.innerHTML = `🚛 Truck is now heading to <b>${place}</b>.`;
-  notifBox.style.display = "block";
-}
-if(status === "cancel") {
-  // fetch weather info
-  const apiKey = "ca45e594f941130c5672f6041a604ba0";
-  async function getWeatherReason() {
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=Manolo Fortich&appid=${apiKey}&units=metric`;
-    const response = await fetch(url);
-    if (!response.ok) return "Unable to fetch weather.";
-    const data = await response.json();
-    return `${data.weather[0].description} | Temp: ${data.main.temp}°C | Humidity: ${data.main.humidity}% | Wind: ${data.wind.speed} m/s`;
-  }
-  getWeatherReason().then(reason => {
-    notifBox.innerHTML = `❌ <b>Collection Cancelled</b><br>Reason: <b>${reason}</b>`;
-    notifBox.style.display = "block";
-  });
-}
-
-/* --- MAP INITIALIZATION --- */
-function initMap() {
-  const map = L.map('map').setView([8.360053, 124.868342], 17);
-
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap'
-  }).addTo(map);
-
-  fetch('maps.json')
-    .then(res => res.json())
-    .then(data => {
-      data.forEach(pin => {
-        if(pin.barangay === place){ // Show only selected barangay
-          const marker = L.marker([pin.lat, pin.lng]).addTo(map);
-          marker.bindPopup(`<b>${pin.title}</b><br>${pin.description}`);
-        }
-      });
-    })
-    .catch(err => console.error(err));
-}
-
-document.addEventListener("DOMContentLoaded", initMap);
-</script>
-
 </body>
 </html>
