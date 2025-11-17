@@ -5,30 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Waste Collection Notification System</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
+    * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
     body { background: #f4f8f4; margin: 0; padding: 0; }
-    header { background-color: #2e7d32; color: white; text-align: center; padding: 1rem 0; }
+    header { background-color: #2e7d32; color: white; text-align: center; padding: 1rem 0; position: relative; }
     main { max-width: 700px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-
-    select, button {
-      padding: 10px; font-size: 1rem; margin: 0.5rem 0;
-      width: 100%; border: 1px solid #ccc; border-radius: 6px;
-    }
+    select, button { padding: 10px; font-size: 1rem; margin: 0.5rem 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
     button { background-color: #2e7d32; color: white; cursor: pointer; }
     button:hover { background-color: #256428; }
-
-    .schedule-box {
-      background: #e8f5e9; padding: 1rem; margin-top: 1.5rem;
-      border-radius: 8px; border-left: 6px solid #2e7d32;
-    }
-    .notification {
-      background: #d9ffd9; color: #2e7d32;
-      border: 2px solid #2e7d32; padding: 1rem;
-      border-radius: 8px; margin-top: 1rem; display: none;
-    }
+    .schedule-box { background: #e8f5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; border-left: 6px solid #2e7d32; }
+    .notification { background: #d9ffd9; color: #2e7d32; border: 2px solid #2e7d32; padding: 1rem; border-radius: 8px; margin-top: 1rem; display: none; }
   </style>
 </head>
 <body>
@@ -54,10 +39,8 @@
   <div class="notification" id="notificationBox"></div>
 </main>
 
-
 <script>
-
-// ORIGINAL SCHEDULE DATA
+// Schedule Data
 const schedules = [
   { barangay: "Tankulan", date: "November 14, 2025", time: "10:00 AM" },
   { barangay: "Kalugmanan", date: "November 14, 2025", time: "11:30 AM" },
@@ -65,18 +48,15 @@ const schedules = [
   { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" },
 ];
 
+// OpenWeather API
 const apiKey = "ca45e594f941130c5672f6041a604ba0";
-
 async function getWeatherReason() {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=Manolo Fortich&appid=${apiKey}&units=metric`;
-
   const response = await fetch(url);
   if (!response.ok) return "Unable to fetch weather.";
-
   const data = await response.json();
-  return data.weather[0].description;
+  return `${data.weather[0].description} | Temp: ${data.main.temp}°C | Humidity: ${data.main.humidity}% | Wind: ${data.wind.speed} m/s`;
 }
-
 
 const viewBtn = document.getElementById("viewScheduleBtn");
 const scheduleDiv = document.getElementById("scheduleResult");
@@ -84,7 +64,6 @@ const notifBox = document.getElementById("notificationBox");
 
 viewBtn.addEventListener("click", () => {
   const barangay = document.getElementById("barangaySelect").value;
-
   scheduleDiv.innerHTML = "";
   notifBox.style.display = "none";
 
@@ -112,16 +91,13 @@ viewBtn.addEventListener("click", () => {
     `;
 
     document.getElementById("onWayBtn").onclick = () => {
-      notifBox.innerHTML = `🚛 Truck is now heading to <b>${found.barangay}</b>.`;
+      notifBox.innerHTML = `🚛 Truck is now heading to <b>${found.barangay}</b> at ${found.time}.`;
       notifBox.style.display = "block";
     };
 
     document.getElementById("cancelBtn").onclick = async () => {
       const reason = await getWeatherReason();
-      notifBox.innerHTML = `
-        ❌ <b>Collection Cancelled</b><br>
-        Reason: <b>${reason}</b>
-      `;
+      notifBox.innerHTML = `❌ <b>Collection Cancelled</b><br>Reason: <b>${reason}</b>`;
       notifBox.style.display = "block";
     };
 
