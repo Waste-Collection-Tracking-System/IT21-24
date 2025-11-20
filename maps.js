@@ -2,7 +2,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const place = urlParams.get('place') || 'Tankulan';
 
 function initMap() {
-  const map = L.map('map').setView([8.360053, 124.868342], 17);
+
+  // Temporary initial map
+  const map = L.map('map').setView([0, 0], 2);
 
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -12,12 +14,21 @@ function initMap() {
   fetch('maps.json')
     .then(res => res.json())
     .then(data => {
-      data.forEach(pin => {
-        if(pin.barangay === place){
-          const marker = L.marker([pin.lat, pin.lng]).addTo(map);
-          marker.bindPopup(`<b>${pin.title}</b><br>${pin.description}`);
-        }
-      });
+
+      const pin = data.find(p => p.barangay === place);
+
+      if (!pin) {
+        console.error("Barangay not found:", place);
+        return;
+      }
+
+      // ✅ Center map EXACTLY on selected barangay
+      map.setView([pin.lat, pin.lng], 17);
+
+      // Add marker
+      const marker = L.marker([pin.lat, pin.lng]).addTo(map);
+      marker.bindPopup(`<b>${pin.title}</b><br>${pin.description}`).openPopup();
+
     })
     .catch(err => console.error(err));
 }

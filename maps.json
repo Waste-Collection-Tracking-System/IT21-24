@@ -1,6 +1,33 @@
 [
-  { "barangay": "Tankulan", "lat": 8.36005, "lng": 124.86834, "title": "Tankulan Truck", "description": "Garbage truck current location" },
-  { "barangay": "Kalugmanan", "lat": 8.36100, "lng": 124.86910, "title": "Kalugmanan Truck", "description": "Garbage truck current location" },
-  { "barangay": "Sinangguyan", "lat": 8.36200, "lng": 124.86780, "title": "Sinangguyan Truck", "description": "Garbage truck current location" },
-  { "barangay": "Managok", "lat": 8.36300, "lng": 124.86890, "title": "Managok Truck", "description": "Garbage truck current location" }
+  { 
+     "barangay": "Tankulan", 
+     "lat": 8.359117407602442, 
+     "lng": 124.86787189173333, 
+     "title": "Tankulan Truck", 
+     "description": "Garbage truck current location"
+ },
+  { 
+     "barangay": "Kalugmanan",
+     "lat": 8.234310, 
+     "lng": 124.868175, 
+     "title": "Kalugmanan Truck", 
+     "description": "Garbage truck current location" 
+  },
+
+  { 
+     "barangay": "Diclum", 
+     "lat": 8.363411, 
+     "lng":  124.851526, 
+     "title": "Diclum Truck", 
+     "description": "Garbage truck current location" 
+    },
+
+  { 
+     "barangay": "Lingion", 
+     "lat": 8.403666, 
+     "lng": 124.888717, 
+     "title": "Lingion Truck", 
+     "description": "Garbage truck current location" 
+    
+  }
 ]
