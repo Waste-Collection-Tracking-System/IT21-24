@@ -7,7 +7,7 @@
      "description": "Garbage truck current location"
  },
   { 
-     "barangay": "Kalugmanan",
+     "barangay": "Sankanan",
      "lat": 8.234310, 
      "lng": 124.868175, 
      "title": "Kalugmanan Truck", 
@@ -15,7 +15,7 @@
   },
 
   { 
-     "barangay": "Diclum", 
+     "barangay": "Dicklum", 
      "lat": 8.363411, 
      "lng":  124.851526, 
      "title": "Diclum Truck", 
