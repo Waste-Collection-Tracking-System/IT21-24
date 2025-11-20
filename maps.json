@@ -1,8 +1,8 @@
 [
   { 
      "barangay": "Tankulan", 
-     "lat": 8.362745,  
-     "lng": 124.864448,
+     "lat": 8.314803,  
+     "lng": 124.857840,
      "title": "Tankulan Truck", 
      "description": "Garbage truck current location"
  },
@@ -10,7 +10,7 @@
      "barangay": "Sankanan",
      "lat": 8.234310, 
      "lng": 124.868175, 
-     "title": "Kalugmanan Truck", 
+     "title": "Sankanan Truck", 
      "description": "Garbage truck current location" 
   },
 
