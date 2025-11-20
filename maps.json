@@ -1,8 +1,8 @@
 [
   { 
      "barangay": "Tankulan", 
-     "lat": 8.359117407602442, 
-     "lng": 124.86787189173333, 
+     "lat": 8.362745,  
+     "lng": 124.864448,
      "title": "Tankulan Truck", 
      "description": "Garbage truck current location"
  },
