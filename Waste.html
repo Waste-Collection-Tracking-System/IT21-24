@@ -4,26 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waste Collection Tracker with Charts</title>
-    
-    <!-- Chart.js for the charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <style>
         * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: #f4f8f4; margin: 0; padding: 0; }
 
         header { background-color: #2e7d32; color: white; text-align: center; padding: 1rem 0; }
-        main { max-width: 700px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        main { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
         select, button { padding: 10px; font-size: 1rem; margin: 0.5rem 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
         button { background-color: #2e7d32; color: white; cursor: pointer; }
         button:hover { background-color: #256428; }
+
         .schedule-box { background: #e8f5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; border-left: 6px solid #2e7d32; }
 
-        /* Toast Notification */
         #toast {
           position: fixed;
-          top: -100px; /* hidden initially */
+          top: -100px;
           left: 50%;
           transform: translateX(-50%);
           background: #e0e0e0;
@@ -38,13 +35,9 @@
           transition: top 0.5s ease;
         }
 
-        /* Chart section */
-        .chart-section { 
-            margin-top: 2rem; 
-            text-align: center; 
-            display: none; /* Hidden by default */
-        }
+        .chart-section { margin-top: 2rem; text-align: center; display: none; }
         .chart-section h2 { color: #2e7d32; }
+
         .chart-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -54,6 +47,7 @@
             background: white;
             padding: 20px;
             border-radius: 12px;
+            height: 300px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
     </style>
@@ -76,34 +70,29 @@
 </select>
 
 <button id="viewScheduleBtn">View Schedule</button>
-
 <div id="scheduleResult"></div>
 
-<!-- New button to show charts -->
 <button id="viewChartsBtn">View Waste Charts</button>
 
-<!-- Chart section (hidden initially) -->
 <div class="chart-section" id="chartSection">
     <h2>Barangay Waste Monitoring Charts</h2>
     <div class="chart-grid">
-        <div class="chart-box"><canvas id="chart1" height="150"></canvas></div>
-        <div class="chart-box"><canvas id="chart2" height="150"></canvas></div>
-        <div class="chart-box"><canvas id="chart3" height="150"></canvas></div>
-        <div class="chart-box"><canvas id="chart4" height="150"></canvas></div>
+        <div class="chart-box"><canvas id="chart1"></canvas></div>
+        <div class="chart-box"><canvas id="chart2"></canvas></div>
+        <div class="chart-box"><canvas id="chart3"></canvas></div>
+        <div class="chart-box"><canvas id="chart4"></canvas></div>
     </div>
 </div>
 </main>
 
-<!-- Top notification -->
 <div id="toast"></div>
 
 <script>
-// Waste Collection Notification System Script
 const schedules = [
   { barangay: "Tankulan", date: "November 14, 2025", time: "10:00 AM" },
   { barangay: "Kalugmanan", date: "November 14, 2025", time: "11:30 AM" },
   { barangay: "Sinangguyan", date: "November 14, 2025", time: "1:00 PM" },
-  { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" },
+  { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" }
 ];
 
 const apiKey = "ca45e594f941130c5672f6041a604ba0";
@@ -121,14 +110,10 @@ async function getWeatherReason() {
           <p>Wind Speed: ${data.wind.speed} m/s</p>`;
 }
 
-// Show toast notification
 function showToast(message) {
   toast.innerHTML = message;
-  toast.style.top = "20px"; // slide down
-  toast.style.display = "block";
-  setTimeout(() => {
-    toast.style.top = "-100px"; // hide after 5 sec
-  }, 5000);
+  toast.style.top = "20px";
+  setTimeout(() => { toast.style.top = "-100px"; }, 5000);
 }
 
 const viewBtn = document.getElementById("viewScheduleBtn");
@@ -138,10 +123,7 @@ viewBtn.addEventListener("click", () => {
   const barangay = document.getElementById("barangaySelect").value;
   scheduleDiv.innerHTML = "";
 
-  if (!barangay) {
-    scheduleDiv.innerHTML = "<p>Please select a barangay.</p>";
-    return;
-  }
+  if (!barangay) return scheduleDiv.innerHTML = "<p>Please select a barangay.</p>";
 
   const found = schedules.find(s => s.barangay === barangay);
 
@@ -170,43 +152,32 @@ viewBtn.addEventListener("click", () => {
     document.getElementById("viewMapBtn").onclick = () => {
       window.location.href = `maps.html?place=${found.barangay}`;
     };
-
-  } else {
-    scheduleDiv.innerHTML = `<p>No schedule found for ${barangay}.</p>`;
   }
 });
 
-// Button to show/hide charts
 const viewChartsBtn = document.getElementById("viewChartsBtn");
 const chartSection = document.getElementById("chartSection");
 
 viewChartsBtn.addEventListener("click", () => {
   if (chartSection.style.display === "none" || chartSection.style.display === "") {
     chartSection.style.display = "block";
-    viewChartsBtn.textContent = "Hide Waste Charts";
-    // Initialize charts when shown
+    viewChartsBtn.textContent = "Waste Data";
     initCharts();
   } else {
+
     chartSection.style.display = "none";
-    viewChartsBtn.textContent = "View Waste Charts";
-  }
+    viewChartsBtn.textContent = "Waste Data";}
 });
 
-// Chart initialization function
 function initCharts() {
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  // SAMPLE VALUES (you can change these)
-  const tankulanData = [1, 2, 3, 4, 5, 4, 3, 2, 3, 4, 5, 4];
-  const kalugmananData = [2, 3, 4, 5, 4, 3, 2, 3, 4, 5, 3, 2];
-  const sinangguyanData = [3, 3, 4, 4, 5, 5, 4, 3, 3, 4, 5, 4];
-  const managokData = [1, 1, 2, 3, 4, 3, 2, 2, 3, 4, 4, 5];
+  const tankulanData = [1,2,3,4,5,4,3,2,3,4,3,4];
+  const kalugmananData = [2,3,4,5,4,3,2,3,4,5,3,2];
+  const sinangguyanData = [3,3,4,4,5,2,4,3,3,4,3,4];
+  const managokData = [1,1,2,3,4,3,2,2,3,4,4,5];
 
-  // Reusable function
-  function createChart(canvasId, title, dataPoints, lineColor) {
+  function createChart(canvasId, title, dataPoints) {
     new Chart(document.getElementById(canvasId), {
       type: "line",
       data: {
@@ -214,15 +185,19 @@ function initCharts() {
         datasets: [{
           label: title,
           data: dataPoints,
-          borderColor: lineColor,
-          borderWidth: 3,
-          tension: 0.4,
-          pointRadius: 5
+          borderColor: "#42A5F5",
+          borderWidth: 1,
+          tension: 0.35,
+          pointRadius: 2,
+          pointHoverRadius: 3,
+          fill: false
         }]
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
+          legend: { display: true },
           title: {
             display: true,
             text: title,
@@ -230,21 +205,17 @@ function initCharts() {
           }
         },
         scales: {
-          y: {
-            min: 1,
-            max: 5,
-            ticks: { stepSize: 1 }
-          }
+          x: { grid: { color: "rgba(0,0,0,0.05)" }},
+          y: { grid: { color: "rgba(0,0,0,0.05)" }}
         }
       }
     });
   }
 
-  // Create 4 Charts
-  createChart("chart1", "Tankulan", tankulanData, "blue");
-  createChart("chart2", "Kalugmanan", kalugmananData, "green");
-  createChart("chart3", "Sinangguyan", sinangguyanData, "orange");
-  createChart("chart4", "Managok", managokData, "red");
+  createChart("chart1", "Tankulan", tankulanData);
+  createChart("chart2", "Kalugmanan", kalugmananData);
+  createChart("chart3", "Sinangguyan", sinangguyanData);
+  createChart("chart4", "Managok", managokData);
 }
 </script>
 
