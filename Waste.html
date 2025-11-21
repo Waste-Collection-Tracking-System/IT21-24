@@ -206,7 +206,11 @@ function initCharts() {
         },
         scales: {
           x: { grid: { color: "rgba(0,0,0,0.05)" }},
-          y: { grid: { color: "rgba(0,0,0,0.05)" }}
+          y: { 
+            min: 0,
+            max: 10,
+            grid: { color: "rgba(0,0,0,0.05)" }
+          }
         }
       }
     });
