@@ -64,7 +64,6 @@
 
 <script>
 
-// ⭐ CLASS BASED JSON LOADER (like your sample)
 class WasteDataLoader {
     constructor(jsonFile) {
         this.jsonFile = jsonFile;
@@ -89,16 +88,10 @@ class WasteDataLoader {
     }
 }
 
-// ⭐ Create loader instance
-const wasteLoader = new WasteDataLoader("Wastedata.json");
+const wasteLoader = new WasteDataLoader("WasteData.json");
 
-// Load JSON first
-let wasteData = null;
-wasteLoader.init().then(data => wasteData = data);
-
-// ------------------------------------------------------------
-// THE REST OF YOUR CODE
-// ------------------------------------------------------------
+let WasteData = null;
+wasteLoader.init().then(data => WasteData = data);
 
 const schedules = [
   { barangay: "Tankulan", date: "November 14, 2025", time: "10:00 AM" },
