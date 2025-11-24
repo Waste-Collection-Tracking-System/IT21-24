@@ -3,7 +3,6 @@ const place = urlParams.get('place') || 'Tankulan';
 
 function initMap() {
 
-  // Temporary initial map
   const map = L.map('map').setView([0, 0], 2);
 
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -22,12 +21,21 @@ function initMap() {
         return;
       }
 
-      // ✅ Center map EXACTLY on selected barangay
+      
       map.setView([pin.lat, pin.lng], 17);
 
-      // Add marker
-      const marker = L.marker([pin.lat, pin.lng]).addTo(map);
-      marker.bindPopup(`<b>${pin.title}</b><br>${pin.description}`).openPopup();
+      
+      const truckIcon = L.icon({
+        iconUrl: 'truck.png.png',  
+        iconSize: [40, 40],     
+        iconAnchor: [20, 40],   
+        popupAnchor: [0, -40]
+      });
+
+      
+      L.marker([pin.lat, pin.lng], { icon: truckIcon })
+        .addTo(map)
+        .bindPopup(`<b>${pin.barangay}</b><br>Garbage truck location`);
 
     })
     .catch(err => console.error(err));
