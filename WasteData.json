@@ -1,4 +1,72 @@
 {
-    "labels": ["January","February","March","April","May","June","July","August","September","October","November","December"],
-    "values": [1,2,3,4,5]
+  "barangays": [
+    {
+      "name": "Tankulan",
+      "monthlyData": {
+        "January": 3,
+        "February": 4,
+        "March": 2,
+        "April": 5,
+        "May": 3,
+        "June": 4,
+        "July": 2,
+        "August": 3,
+        "September": 4,
+        "October": 5,
+        "November": 3,
+        "December": 4
+      }
+    },
+    {
+      "name": "Kalugmanan",
+      "monthlyData": {
+        "January": 2,
+        "February": 3,
+        "March": 4,
+        "April": 3,
+        "May": 5,
+        "June": 4,
+        "July": 3,
+        "August": 2,
+        "September": 4,
+        "October": 3,
+        "November": 5,
+        "December": 4
+      }
+    },
+    {
+      "name": "Sinangguyan",
+      "monthlyData": {
+        "January": 4,
+        "February": 5,
+        "March": 3,
+        "April": 4,
+        "May": 3,
+        "June": 2,
+        "July": 5,
+        "August": 4,
+        "September": 3,
+        "October": 4,
+        "November": 2,
+        "December": 5
+      }
+    },
+    {
+      "name": "Managok",
+      "monthlyData": {
+        "January": 3,
+        "February": 2,
+        "March": 4,
+        "April": 3,
+        "May": 4,
+        "June": 5,
+        "July": 3,
+        "August": 4,
+        "September": 2,
+        "October": 3,
+        "November": 4,
+        "December": 5
+      }
+    }
+  ]
 }
