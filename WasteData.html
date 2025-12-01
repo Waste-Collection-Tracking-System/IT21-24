@@ -121,6 +121,37 @@ function showToast(message) {
   setTimeout(() => { toast.style.top = "-100px"; }, 5000);
 }
 
+function renderChart(barangay) {
+  if (!WasteData || !WasteData[barangay]) {
+    showToast("Waste data not available for this barangay.");
+    return;
+  }
+
+  const data = WasteData[barangay];
+  const ctx = document.getElementById("wasteChart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: `${barangay} Waste Data`,
+        data: data.values,
+        borderColor: "rgba(46, 125, 50, 1)",
+        backgroundColor: "rgba(46, 125, 50, 0.1)",
+        borderWidth: 2
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
 document.getElementById("viewScheduleBtn").addEventListener("click", () => {
   const barangay = document.getElementById("barangaySelect").value;
   const scheduleDiv = document.getElementById("scheduleResult");
@@ -144,6 +175,7 @@ document.getElementById("viewScheduleBtn").addEventListener("click", () => {
         <button id="cancelBtn">Cancelled Due to Weather</button>
         <button id="viewMapBtn">View Truck Location (Map)</button>
         <button id="viewChartBtn">View Waste Data Charts</button>
+        <canvas id="wasteChart" style="margin-top: 1rem;"></canvas>
       </div>
     `;
 
@@ -158,8 +190,9 @@ document.getElementById("viewScheduleBtn").addEventListener("click", () => {
     document.getElementById("viewMapBtn").onclick = () =>
       window.location.href = `maps.html?place=${found.barangay}`;
 
-    document.getElementById("viewChartBtn").onclick = () =>
-      window.location.href = `charts.html?place=${found.barangay}`;
+    document.getElementById("viewChartBtn").onclick = () => {
+      renderChart(barangay);
+    };
   }
 });
 </script>
