@@ -5,26 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Waste Collection Notification System</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
 body { background: #f4f8f4; margin: 0; padding: 0; }
 
 header { background-color: #2e7d32; color: white; text-align: center; padding: 1rem 0; }
-main { max-width: 700px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+main { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
 select, button { padding: 10px; font-size: 1rem; margin: 0.5rem 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
 button { background-color: #2e7d32; color: white; cursor: pointer; }
 button:hover { background-color: #256428; }
+
 .schedule-box { background: #e8f5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; border-left: 6px solid #2e7d32; }
 
 /* Toast Notification */
 #toast {
   position: fixed;
-  top: -100px; /* hidden initially */
+  top: -100px;
   left: 50%;
   transform: translateX(-50%);
   background: #e0e0e0;
@@ -40,6 +43,7 @@ button:hover { background-color: #256428; }
 }
 </style>
 </head>
+
 <body>
 
 <header>
@@ -62,20 +66,55 @@ button:hover { background-color: #256428; }
 <div id="scheduleResult"></div>
 </main>
 
-<!-- Top notification -->
 <div id="toast"></div>
 
 <script>
+// ===========================
+//    WASTE DATA LOADER
+// ===========================
+class WasteDataLoader {
+    constructor(jsonFile) {
+        this.jsonFile = jsonFile;
+        this.data = null;
+    }
+
+    async fetchData() {
+        try {
+            const response = await fetch(this.jsonFile);
+            if (!response.ok) throw new Error("Failed to load JSON");
+            this.data = await response.json();
+            return this.data;
+        } catch (error) {
+            console.error("JSON Load Error:", error);
+            return null;
+        }
+    }
+
+    async init() {
+        return await this.fetchData();
+    }
+}
+
+const wasteLoader = new WasteDataLoader("WasteData.json");
+let WasteData = null;
+wasteLoader.init().then(data => WasteData = data);
+
+// ===============================
+//    ORIGINAL SCHEDULES
+// ===============================
 const schedules = [
   { barangay: "Tankulan", date: "November 14, 2025", time: "10:00 AM" },
   { barangay: "Kalugmanan", date: "November 14, 2025", time: "11:30 AM" },
   { barangay: "Sinangguyan", date: "November 14, 2025", time: "1:00 PM" },
-  { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" },
+  { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" }
 ];
 
 const apiKey = "ca45e594f941130c5672f6041a604ba0";
 const toast = document.getElementById("toast");
 
+// ===============================
+//    WEATHER API (ORIGINAL)
+// ===============================
 async function getWeatherReason() {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=Manolo Fortich&appid=${apiKey}&units=metric`;
   const response = await fetch(url);
@@ -88,21 +127,53 @@ async function getWeatherReason() {
           <p>Wind Speed: ${data.wind.speed} m/s</p>`;
 }
 
-// Show toast notification
+// ===============================
+//    TOAST (ORIGINAL)
+// ===============================
 function showToast(message) {
   toast.innerHTML = message;
-  toast.style.top = "20px"; // slide down
-  toast.style.display = "block";
-  setTimeout(() => {
-    toast.style.top = "-100px"; // hide after 5 sec
-  }, 5000);
+  toast.style.top = "20px";
+  setTimeout(() => { toast.style.top = "-100px"; }, 5000);
 }
 
-const viewBtn = document.getElementById("viewScheduleBtn");
-const scheduleDiv = document.getElementById("scheduleResult");
+// ===============================
+//    CHART RENDERER (FROM WasteData.html)
+// ===============================
+function renderChart(barangay) {
+  if (!WasteData || !WasteData[barangay]) {
+    showToast("Waste data not available for this barangay.");
+    return;
+  }
 
-viewBtn.addEventListener("click", () => {
+  const data = WasteData[barangay];
+  const ctx = document.getElementById("wasteChart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: `${barangay} Waste Data`,
+        data: data.values,
+        borderColor: "rgba(46, 125, 50, 1)",
+        backgroundColor: "rgba(46, 125, 50, 0.1)",
+        borderWidth: 2
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+// ===============================
+//    MAIN BUTTON LOGIC
+// ===============================
+document.getElementById("viewScheduleBtn").addEventListener("click", () => {
   const barangay = document.getElementById("barangaySelect").value;
+  const scheduleDiv = document.getElementById("scheduleResult");
   scheduleDiv.innerHTML = "";
 
   if (!barangay) {
@@ -122,26 +193,31 @@ viewBtn.addEventListener("click", () => {
         <button id="onWayBtn">Truck On The Way</button>
         <button id="cancelBtn">Cancelled Due to Weather</button>
         <button id="viewMapBtn">View Truck Location (Map)</button>
+
+        <!-- NEW BUTTON FOR CHART -->
+        <button id="viewChartBtn">View Waste Data Chart</button>
+
+        <!-- CANVAS FOR CHART -->
+        <canvas id="wasteChart" style="margin-top: 1rem; width: 100%; height: 300px;"></canvas>
       </div>
     `;
 
-    document.getElementById("onWayBtn").onclick = () => {
-      showToast(`🚛 Truck is now heading to <b>${found.barangay}</b> at <b>${found.time}</b>.`);
-    };
+    document.getElementById("onWayBtn").onclick =
+      () => showToast(`🚛 Truck is now heading to <b>${found.barangay}</b> at <b>${found.time}</b>.`);
 
     document.getElementById("cancelBtn").onclick = async () => {
       const reason = await getWeatherReason();
       showToast(`❌ <b>Collection Cancelled</b> due to weather:<br>${reason}`);
     };
 
-    document.getElementById("viewMapBtn").onclick = () => {
-      window.location.href = `maps.html?place=${found.barangay}`;
-    };
+    document.getElementById("viewMapBtn").onclick =
+      () => window.location.href = `maps.html?place=${found.barangay}`;
 
-  } else {
-    scheduleDiv.innerHTML = `<p>No schedule found for ${barangay}.</p>`;
+    document.getElementById("viewChartBtn").onclick =
+      () => renderChart(barangay);
   }
 });
 </script>
+
 </body>
 </html>
