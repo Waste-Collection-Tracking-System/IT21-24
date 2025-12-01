@@ -7,9 +7,26 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
-body { font-family: "Poppins", sans-serif; background: #f4f8f4; margin:0; padding:0; }
-#map { height: 300px; width: 90%; margin: 10px auto; border-radius: 10px; }
-button { margin:10px; padding:10px 15px; border:none; border-radius:8px; cursor:pointer; background:#2e7d32; color:white; }
+body
+ { font-family: "Poppins", sans-serif; 
+     background: #f4f8f4; 
+     margin:0; 
+     padding:0; }
+#map 
+{ 
+  height: 500px; 
+  width: 90%; 
+  margin: 10px auto; 
+  border-radius: 10px; 
+
+}
+button { margin:10px; 
+  padding:10px 15px; 
+  border:none; 
+  border-radius:8px; 
+  cursor:pointer; 
+  background:#2e7d32; 
+  color:white; }
 button:hover { background:#256428; }
 </style>
 </head>
@@ -20,7 +37,7 @@ button:hover { background:#256428; }
 <div style="text-align:center;">
   <button onclick="history.back()">← Back to Home</button>
 </div>
-
+<script>src="maps.json"</script>
 <script src="maps.js"></script>
 </body>
 </html>

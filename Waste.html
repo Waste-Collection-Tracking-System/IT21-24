@@ -8,18 +8,50 @@
 * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
 body { background: #f4f8f4; margin: 0; padding: 0; }
 
-header { background-color: #2e7d32; color: white; text-align: center; padding: 1rem 0; }
-main { max-width: 700px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+header { 
+          background-color: #2e7d32; 
+          color: white; 
+          text-align: center; 
+          padding: 1rem 0;
+       }
+main { 
+         max-width: 700px; 
+         margin: 2rem auto; 
+         background: white; 
+         padding: 2rem; 
+         border-radius: 12px; 
+         box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
 
-select, button { padding: 10px; font-size: 1rem; margin: 0.5rem 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
-button { background-color: #2e7d32; color: white; cursor: pointer; }
-button:hover { background-color: #256428; }
-.schedule-box { background: #e8f5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; border-left: 6px solid #2e7d32; }
+select, button 
+      { 
+         padding: 10px; 
+         font-size: 1rem;
+         margin: 0.5rem 0; 
+         width: 100%; 
+         border: 1px solid #ccc; 
+         border-radius: 6px; 
+        }
 
-/* Toast Notification */
+button { 
+         background-color: #2e7d32; 
+         color: white; 
+         cursor: pointer; 
+        }
+button:hover { 
+         background-color: #256428; 
+        }
+.schedule-box { 
+         background: #e8f5e9; 
+         padding: 1rem; 
+         margin-top: 1.5rem; 
+         border-radius: 8px; 
+         border-left: 6px solid #2e7d32; }
+
+
 #toast {
   position: fixed;
-  top: -100px; /* hidden initially */
+  top: -100px;
   left: 50%;
   transform: translateX(-50%);
   background: #e0e0e0;
@@ -47,9 +79,9 @@ button:hover { background-color: #256428; }
 <select id="barangaySelect">
   <option value="">-- Choose a Barangay --</option>
   <option value="Tankulan">Tankulan</option>
-  <option value="Kalugmanan">Kalugmanan</option>
-  <option value="Sinangguyan">Sinangguyan</option>
-  <option value="Managok">Managok</option>
+  <option value="Sankanan">Sankanan</option>
+  <option value="Dicklum">Dicklum</option>
+  <option value="Lingion">Lingion</option>
 </select>
 
 <button id="viewScheduleBtn">View Schedule</button>
@@ -57,15 +89,31 @@ button:hover { background-color: #256428; }
 <div id="scheduleResult"></div>
 </main>
 
-<!-- Top notification -->
+
 <div id="toast"></div>
 
 <script>
 const schedules = [
-  { barangay: "Tankulan", date: "November 14, 2025", time: "10:00 AM" },
-  { barangay: "Kalugmanan", date: "November 14, 2025", time: "11:30 AM" },
-  { barangay: "Sinangguyan", date: "November 14, 2025", time: "1:00 PM" },
-  { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" },
+  { 
+    barangay: "Tankulan", 
+    date: "November 14, 2025", 
+    time: "10:00 AM" 
+  },
+  { 
+    barangay: "Sankanan", 
+    date: "November 14, 2025", 
+    time: "11:30 AM" 
+  },
+  { 
+    barangay: "Dicklum", 
+    date: "November 14, 2025", 
+    time: "1:00 PM" 
+  },
+  { 
+    barangay: "Lingion", 
+    date: "November 14, 2025", 
+    time: "2:30 PM" 
+  },
 ];
 
 const apiKey = "ca45e594f941130c5672f6041a604ba0";
@@ -83,13 +131,13 @@ async function getWeatherReason() {
           <p>Wind Speed: ${data.wind.speed} m/s</p>`;
 }
 
-// Show toast notification
+
 function showToast(message) {
   toast.innerHTML = message;
-  toast.style.top = "20px"; // slide down
+  toast.style.top = "20px"; 
   toast.style.display = "block";
   setTimeout(() => {
-    toast.style.top = "-100px"; // hide after 5 sec
+    toast.style.top = "-100px"; 
   }, 5000);
 }
 
@@ -115,7 +163,7 @@ viewBtn.addEventListener("click", () => {
         <p><strong>Arrival Time:</strong> ${found.time}</p>
 
         <button id="onWayBtn">Truck On The Way</button>
-        <button id="cancelBtn">Cancelled Due to Weather</button>
+        <button id="cancelBtn">Cancelled due to weather</button>
         <button id="viewMapBtn">View Truck Location (Map)</button>
       </div>
     `;
