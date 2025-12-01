@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Collection Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        body { background: #f4f8f4; margin: 0; padding: 0; }
+
+        header { background-color: #2e7d32; color: white; text-align: center; padding: 1rem 0; }
+        main { max-width: 900px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        select, button { padding: 10px; font-size: 1rem; margin: 0.5rem 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
+        button { background-color: #2e7d32; color: white; cursor: pointer; }
+        button:hover { background-color: #256428; }
+
+        .schedule-box { background: #e8f5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; border-left: 6px solid #2e7d32; }
+
+        #toast {
+          position: fixed;
+          top: -100px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #e0e0e0;
+          color: #333;
+          border-left: 6px solid #2e7d32;
+          padding: 15px 25px;
+          border-radius: 8px;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+          z-index: 1000;
+          max-width: 90%;
+          text-align: center;
+          transition: top 0.5s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+<h1>Waste Collection Tracker</h1>
+<p>Get Notified When the Garbage Truck Arrives</p>
+</header>
+
+<main>
+<label for="barangaySelect">Select Barangay:</label>
+<select id="barangaySelect">
+  <option value="">-- Choose a Barangay --</option>
+  <option value="Tankulan">Tankulan</option>
+  <option value="Kalugmanan">Kalugmanan</option>
+  <option value="Sinangguyan">Sinangguyan</option>
+  <option value="Managok">Managok</option>
+</select>
+
+<button id="viewScheduleBtn">View Schedule</button>
+<div id="scheduleResult"></div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+
+class WasteDataLoader {
+    constructor(jsonFile) {
+        this.jsonFile = jsonFile;
+        this.data = null;
+    }
+
+    async fetchData() {
+        try {
+            const response = await fetch(this.jsonFile);
+            if (!response.ok) throw new Error("Failed to load JSON");
+            this.data = await response.json();
+            console.log("Loaded JSON:", this.data);
+            return this.data;
+        } catch (error) {
+            console.error("JSON Load Error:", error);
+            return null;
+        }
+    }
+
+    async init() {
+        return await this.fetchData();
+    }
+}
+
+const wasteLoader = new WasteDataLoader("WasteData.json");
+
+let WasteData = null;
+wasteLoader.init().then(data => WasteData = data);
+
+const schedules = [
+  { barangay: "Tankulan", date: "November 14, 2025", time: "10:00 AM" },
+  { barangay: "Kalugmanan", date: "November 14, 2025", time: "11:30 AM" },
+  { barangay: "Sinangguyan", date: "November 14, 2025", time: "1:00 PM" },
+  { barangay: "Managok", date: "November 14, 2025", time: "2:30 PM" }
+];
+
+const apiKey = "ca45e594f941130c5672f6041a604ba0";
+const toast = document.getElementById("toast");
+
+async function getWeatherReason() {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=Manolo Fortich&appid=${apiKey}&units=metric`;
+  const response = await fetch(url);
+  if (!response.ok) return "Unable to fetch weather.";
+  const data = await response.json();
+  return `<h2>${data.name}, ${data.sys.country}</h2>
+          <p>Temperature: ${data.main.temp} °C</p>
+          <p>Weather: ${data.weather[0].description}</p>
+          <p>Humidity: ${data.main.humidity}%</p>
+          <p>Wind Speed: ${data.wind.speed} m/s</p>`;
+}
+
+function showToast(message) {
+  toast.innerHTML = message;
+  toast.style.top = "20px";
+  setTimeout(() => { toast.style.top = "-100px"; }, 5000);
+}
+
+function renderChart(barangay) {
+  if (!WasteData || !WasteData[barangay]) {
+    showToast("Waste data not available for this barangay.");
+    return;
+  }
+
+  const data = WasteData[barangay];
+  const ctx = document.getElementById("wasteChart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: `${barangay} Waste Data`,
+        data: data.values,
+        borderColor: "rgba(46, 125, 50, 1)",
+        backgroundColor: "rgba(46, 125, 50, 0.1)",
+        borderWidth: 2
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+document.getElementById("viewScheduleBtn").addEventListener("click", () => {
+  const barangay = document.getElementById("barangaySelect").value;
+  const scheduleDiv = document.getElementById("scheduleResult");
+  scheduleDiv.innerHTML = "";
+
+  if (!barangay) {
+    scheduleDiv.innerHTML = "<p>Please select a barangay.</p>";
+    return;
+  }
+
+  const found = schedules.find(s => s.barangay === barangay);
+
+  if (found) {
+    scheduleDiv.innerHTML = `
+      <div class="schedule-box">
+        <h3>${found.barangay}</h3>
+        <p><strong>Collection Date:</strong> ${found.date}</p>
+        <p><strong>Arrival Time:</strong> ${found.time}</p>
+
+        <button id="onWayBtn">Truck On The Way</button>
+        <button id="cancelBtn">Cancelled Due to Weather</button>
+        <button id="viewMapBtn">View Truck Location (Map)</button>
+        <button id="viewChartBtn">View Waste Data Charts</button>
+        <canvas id="wasteChart" style="margin-top: 1rem;"></canvas>
+      </div>
+    `;
+
+    document.getElementById("onWayBtn").onclick = () =>
+      showToast(`🚛 Truck is heading to <b>${found.barangay}</b> at <b>${found.time}</b>.`);
+
+    document.getElementById("cancelBtn").onclick = async () => {
+      const reason = await getWeatherReason();
+      showToast(`❌ <b>Collection Cancelled</b> due to weather:<br>${reason}`);
+    };
+
+    document.getElementById("viewMapBtn").onclick = () =>
+      window.location.href = `maps.html?place=${found.barangay}`;
+
+    document.getElementById("viewChartBtn").onclick = () => {
+      renderChart(barangay);
+    };
+  }
+});
+</script>
+
+</body>
+</html>
