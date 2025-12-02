@@ -1,18 +1,18 @@
 {
   "Tankulan": {
-    "labels": ["January", "February", "March", "April", "May", "June"],
-    "values": [120, 150, 180, 200, 170, 190]
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    "values": [6, 2, 4, 6, 8, 6, 3, 7, 9, 5, 7, 8]
   },
   "Sankanan": {
-    "labels": ["January", "February", "March", "April", "May", "June"],
-    "values": [100, 130, 160, 180, 150, 170]
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    "values": [3, 2, 4, 6, 8, 3, 5, 6, 8, 9, 4, 3]
   },
   "Dicklum": {
-    "labels": ["January", "February", "March", "April", "May", "June"],
-    "values": [80, 110, 140, 160, 130, 150]
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    "values": [4, 2, 4, 6, 8, 4, 7, 2, 4, 6, 5, 8]
   },
   "Lingion": {
-    "labels": ["January", "February", "March", "April", "May", "June"],
-    "values": [90, 120, 150, 170, 140, 160]
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    "values": [7, 2, 4, 6, 5, 10, 3, 6, 4, 6, 7, 9]
   }
 }
