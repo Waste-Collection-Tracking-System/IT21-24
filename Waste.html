@@ -23,7 +23,6 @@ button:hover { background-color: #256428; }
 
 .schedule-box { background: #e8f5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; border-left: 6px solid #2e7d32; }
 
-/* Toast Notification */
 #toast {
   position: fixed;
   top: -100px;
@@ -55,9 +54,9 @@ button:hover { background-color: #256428; }
 <select id="barangaySelect">
   <option value="">-- Choose a Barangay --</option>
   <option value="Tankulan">Tankulan</option>
-  <option value="Kalugmanan">Kalugmanan</option>
-  <option value="Sinangguyan">Sinangguyan</option>
-  <option value="Managok">Managok</option>
+  <option value="Sankanan">Sankanan</option>
+  <option value="Dicklum">Dicklum</option>
+  <option value="Lingion">Lingion</option>
 </select>
 
 <button id="viewScheduleBtn">View Schedule</button>
@@ -158,7 +157,7 @@ document.getElementById("viewScheduleBtn").addEventListener("click", () => {
         <p><strong>Arrival Time:</strong> ${found.time}</p>
 
         <button id="onWayBtn">Truck On The Way</button>
-        <button id="cancelBtn">Cancelled Due to Weather</button>
+        <button id="cancelBtn">Cancelled due to weather</button>
         <button id="viewMapBtn">View Truck Location (Map)</button>
         <button id="viewChartBtn">View Waste Data Chart</button>
       </div>
